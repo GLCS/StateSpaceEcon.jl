@@ -18,12 +18,19 @@ Suppressor = "fd094767-a336-5f1f-9728-57cf17d0bbfb"
 TimeSeriesEcon = "8b6756d2-c55c-11ea-2998-5f67ea17da60"
 TimerOutputs = "a759f4b9-e2f1-59dc-863e-4aeb61b1ea8f"
 
+[weakdeps]
+ModelingToolkit = "961ee093-0014-501f-94e3-6117800e7a78"
+
+[extensions]
+StateSpaceEconMTKExt = "ModelingToolkit"
+
 [compat]
 DelimitedFiles = "1.7"
 DiffResults = "1.0"
 ForwardDiff = "0.10"
 LinearAlgebra = "1.7"
 ModelBaseEcon = "0.6"
+ModelingToolkit = "9.20"
 Pardiso = "0.5"
 Printf = "1.7"
 Random = "1.7"
