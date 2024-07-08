@@ -4,6 +4,8 @@ using ModelBaseEcon, StateSpaceEcon, ModelingToolkit
 using StateSpaceEcon.StackedTimeSolver: StackedTimeSolverData
 using StateSpaceEcon.SteadyStateSolver: SolverData as SteadyStateSolverData
 
+export stacked_time_system, steady_state_system, solve_steady_state!
+
 ##############################
 # Stacked time system
 ##############################
