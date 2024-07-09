@@ -3,8 +3,15 @@ module StateSpaceEconMTKExt
 using ModelBaseEcon, StateSpaceEcon, ModelingToolkit
 using StateSpaceEcon.StackedTimeSolver: StackedTimeSolverData
 using StateSpaceEcon.SteadyStateSolver: SolverData as SteadyStateSolverData
-
-export stacked_time_system, steady_state_system, solve_steady_state!
+import StateSpaceEcon.MTKExt:
+    stacked_time_system,
+    compute_residuals_stacked_time,
+    _create_system,
+    rename_variables,
+    get_var_names,
+    solve_steady_state!,
+    steady_state_system,
+    compute_residuals_steady_state
 
 ##############################
 # Stacked time system
