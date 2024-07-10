@@ -1,6 +1,7 @@
 module StateSpaceEconMTKExt
 
 using ModelBaseEcon, StateSpaceEcon, ModelingToolkit
+using ModelingToolkit.SciMLBase: solve
 using StateSpaceEcon.StackedTimeSolver: StackedTimeSolverData
 using StateSpaceEcon.SteadyStateSolver: SolverData as SteadyStateSolverData
 import StateSpaceEcon.MTKExt:
@@ -66,7 +67,7 @@ function compute_residuals_stacked_time(u, sd::StackedTimeSolverData, data::Abst
     point = zeros(eltype(u), size(data))
     point[sd.solve_mask] = u
     # Note: `assign_exog_data!` assigns both exogenous data (including initial conditions) *and* final conditions.
-    assign_exog_data!(point, data, sd)
+    StateSpaceEcon.StackedTimeSolver.assign_exog_data!(point, data, sd)
 
     # Emulate `StackedTimeSolver.stackedtime_R!`, computing the residual
     # for each equation at each simulation period.

@@ -43,8 +43,11 @@ julia = "1.7"
 [extras]
 DelimitedFiles = "8bb1440f-4735-579b-a4ab-409b98df4dab"
 JLD2 = "033835bb-8acc-5ee8-8aae-3f567f8a3819"
+ModelingToolkit = "961ee093-0014-501f-94e3-6117800e7a78"
+NonlinearSolve = "8913a72c-1f9b-4ce2-8d82-65094dcecaec"
 Suppressor = "fd094767-a336-5f1f-9728-57cf17d0bbfb"
+SymbolicIndexingInterface = "2efcf032-c050-4f8e-a9bb-153293bab1f5"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [targets]
-test = ["Test"]
+test = ["Test", "ModelingToolkit", "SymbolicIndexingInterface", "NonlinearSolve"]
