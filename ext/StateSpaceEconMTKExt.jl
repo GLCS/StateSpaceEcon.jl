@@ -200,9 +200,6 @@ function steady_state_system(sd::SteadyStateSolverData)
     prob = NonlinearProblem(f, u0)
     @named sys = modelingtoolkitize(prob)
     s = complete(sys)
-    # TODO: `structural_simplify` fails on model E7A because of the extra constraints
-    # that add more equations than unknowns.
-    # s = structural_simplify(s; conservative = true)
 
     return s
 
