@@ -47,20 +47,21 @@ end
 function stacked_time_system(sd::StackedTimeSolverData, data::AbstractArray{Float64,2})
 
     f = let sd = sd, data = data
-        (u, p) -> compute_residuals_stacked_time(u, sd, data)
+        (u, p) -> compute_residuals_stacked_time(u, p, sd, data)
     end
 
     # Since we are just creating a MTK system out of the `NonlinearProblem`,
     # the `u0` we specify here is not actually used for solving the system.
     u0 = zeros(count(sd.solve_mask))
-    prob = NonlinearProblem(f, u0)
+    p0 = zeros(sum(x -> length(getproperty(sd.evaldata.params[], x[1])), sd.evaldata.params[]))
+    prob = NonlinearProblem(f, u0, p0)
     s = _create_system(prob, sd)
 
     return s
 
 end
 
-function compute_residuals_stacked_time(u, sd::StackedTimeSolverData, data::AbstractArray{Float64,2})
+function compute_residuals_stacked_time(u, p, sd::StackedTimeSolverData, data::AbstractArray{Float64,2})
 
     # We need to use `zeros` instead of `similar` because `assign_exog_data!`
     # doesn't assign final conditions for the shocks.
@@ -69,16 +70,30 @@ function compute_residuals_stacked_time(u, sd::StackedTimeSolverData, data::Abst
     # Note: `assign_exog_data!` assigns both exogenous data (including initial conditions) *and* final conditions.
     StateSpaceEcon.StackedTimeSolver.assign_exog_data!(point, data, sd)
 
+    # Update parameters.
+    # TODO: Try to rewrite without a loop.
+    med = sd.evaldata
+    j = 0
+    for (name, _) in med.params[]
+        param = getproperty(med.params[], name)
+        for i = 1:length(param)
+            j += 1
+            param[i] = p[j]
+        end
+    end
+    foreach(med.alleqns) do eqn
+        ModelBaseEcon._update_eqn_params!(eqn.eval_resid, med.params[])
+    end
+
     # Emulate `StackedTimeSolver.stackedtime_R!`, computing the residual
     # for each equation at each simulation period.
     resid = map(sd.TT[1:length(sd.II)]) do tt
         # `tt` grabs all the data from `point` for the current simulation period, lags, and leads (e.g., `tt = [1, 2, 3, 4, 5, 6]`).
         # The last value of `tt` contains the indices for just the leads (e.g., `tt = [100, 101, 102]`)
         # (but we don't use it in this loop).
-        p = view(point, tt, :)
-        med = sd.evaldata
+        pt = view(point, tt, :)
         map(med.alleqns, med.allinds) do eqn, inds
-            eqn.eval_resid(p[inds])
+            eqn.eval_resid(pt[inds])
         end
     end
 
